@@ -157,3 +157,23 @@ PS C:\Users\user\Desktop\Project\NodeJS> node .\app.js
   name: 'app' }
 ```
 
+### OS Module
+
+```javascript
+const os = require("os");
+
+let totalMem = os.totalmem();
+let freeMem = os.freemem();
+
+console.log(`Total Memory: ${totalMem}`);
+console.log(`Free Memory: ${freeMem}`);
+```
+
+위 파일을 실행하면 아래와 같은 결과가 도출됩니다.
+
+```powershell
+PS C:\Users\user\Desktop\Project\NodeJS> node .\app.js
+Total Memory: 4174069760
+Free Memory: 1060306944
+```
+
