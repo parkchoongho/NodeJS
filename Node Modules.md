@@ -177,3 +177,32 @@ Total Memory: 4174069760
 Free Memory: 1060306944
 ```
 
+### File System Module
+
+```javascript
+const fs = require("fs");
+
+let files = fs.readdirSync("./");
+
+console.log(files);
+
+fs.readdir("./", function(err, files) {
+  if (err) console.log(`Error: ${err}`);
+  else console.log(`Files: ${files}`);
+});
+```
+
+Node는 Single Thread기반의 Asynchronous rutime이므로  Asynchronous한 method를 사용하는 것이 좋습니다. 모든  Asynchronous한 mehod들은 마지막 argument로 call back 이라는 함수를 받습니다. Node는  Asynchronous 동작이 완료된 후 call back 함수를 호출합니다.
+
+위 코드를 실행한 결과는 이렇습니다.
+
+```powershell
+PS C:\Users\user\Desktop\Project\NodeJS> node .\app.js
+[ '.git',
+  'app.js',
+  'Node Modules.md',
+  'NodeJS Fundamentals.md',
+  'README.md' ]
+Files: .git,app.js,Node Modules.md,NodeJS Fundamentals.md,README.md
+```
+
