@@ -103,3 +103,36 @@ log 객체안에 있는 log 함수를 불러왔기 때문에 해당 코드는 �
 
 ### Module Wrapper Function
 
+```powershell
+PS C:\Users\user\Desktop\Project\NodeJS> node .\app.js
+C:\Users\user\Desktop\Project\NodeJS\app.js:1
+(function (exports, require, module, __filename, __dirname) { let x =;
+                                                                     ^
+```
+
+일부러 에러를 발생시키는 코드를 입력하고 해당파일을 실행하면 console에 이러한 결과가 나타납니다. 여기서 보이는 `(function (exports, require, module, __filename, __dirname){}...`의 의미를 알아보겠습니다.
+
+사실 Node는 해당 파일에 작성된 코드를 바로 실행하지 않습니다. Node는 해당 코드를 위와 같은 함수형태로 감싼뒤에 코드를 실행합니다. 이를 적용하면 실질적으로는 아래와 같은 코드를 실행하는 것입니다.
+
+```javascript
+(function(exports, require, module, __filename, __dirname) {
+  const log = require("./logger");
+
+  log.log("hi");
+
+  console.log(log);
+});
+```
+
+위 함수를 **Node Wrapper Function**이라고 칭합니다.
+
+```javascript
+console.log(__dirname);
+console.log(__filename);
+const log = require("./logger");
+
+log.log("hi");
+
+console.log(log);
+```
+
