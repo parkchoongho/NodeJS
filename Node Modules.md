@@ -136,3 +136,24 @@ log.log("hi");
 console.log(log);
 ```
 
+### Path Module
+
+```javascript
+const path = require("path");
+
+const pathObj = path.parse(__filename);
+
+console.log(pathObj);
+```
+
+위 파일을 실행하면 아래와 같은 결과가 도출됩니다.
+
+```powershell
+PS C:\Users\user\Desktop\Project\NodeJS> node .\app.js
+{ root: 'C:\\',
+  dir: 'C:\\Users\\user\\Desktop\\Project\\NodeJS',
+  base: 'app.js',
+  ext: '.js',
+  name: 'app' }
+```
+
