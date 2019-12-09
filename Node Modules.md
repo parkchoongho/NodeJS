@@ -246,3 +246,63 @@ Listener Called!!
 
 emit method와 on의 순서도 중요합니다. emit method가 실행되면 Node는 등록된 모든 listener를 동기적으로 iterate합니다. 따라서 순서가 바뀐다면 원하는 결과가 나타나지 않게 됩니다.
 
+### Event Arguments
+
+많은 경우에 우리는 event 발생 시, 해당 이벤트에 대한 데이터를 보내고 싶어합니다.
+
+```javascript
+const EventEmitter = require("events");
+
+const emitter = new EventEmitter();
+
+// Register a Listener
+emitter.on("messageLogged", function(args) {
+  // e, eventArg
+  console.log("Listener Called!!: ", args);
+});
+
+// Register an Event
+emitter.emit("messageLogged", { id: 1, url: "http://" });
+```
+
+위 처럼 data를 보내면 해당 event의 listener는 이 event argument를 받아서 처리할 수 있습니다.
+
+arrow function을 활용하여 아래와 같이 코드를 변경할 수 있습니다.
+
+```javascript
+const EventEmitter = require("events");
+
+const emitter = new EventEmitter();
+
+// Register a Listener
+emitter.on("messageLogged", args => {
+  // e, eventArg
+  console.log("Listener Called!!: ", args);
+});
+
+// Register an Event
+emitter.emit("messageLogged", { id: 1, url: "http://" });
+```
+
+```javascript
+const EventEmitter = require("events");
+
+const emitter = new EventEmitter();
+
+// Register a Listener
+emitter.on("messageLogged", args => {
+  // e, eventArg
+  console.log("Listener Called!!: ", args);
+});
+
+emitter.on("Logging", args => {
+  console.log(args.message);
+});
+
+// Raise: Logging (data: message)
+emitter.emit("Logging", { message: "Logging..." });
+
+// Register an Event
+emitter.emit("messageLogged", { id: 1, url: "http://" });
+```
+
