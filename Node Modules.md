@@ -306,3 +306,120 @@ emitter.emit("Logging", { message: "Logging..." });
 emitter.emit("messageLogged", { id: 1, url: "http://" });
 ```
 
+### Extending EventEmitter
+
+실제 개발에서는 이 EventEmitter를 그대로 사용하기 보다는 EventEmitter을 확장해서 사용하는 경우가 더 많습니다.
+
+```mysql
+const EventEmitter = require("events");
+
+const emitter = new EventEmitter();
+
+// Register a Listener
+emitter.on("messageLogged", args => {
+  // e, eventArg
+  console.log("Listener Called!!: ", args);
+});
+
+emitter.on("Logging", args => {
+  console.log(args.message);
+});
+
+// Raise: Logging (data: message)
+emitter.emit("Logging", { message: "Logging..." });
+
+const log = require("./logger");
+log("message");
+```
+
+app.js 코드
+
+```javascript
+const EventEmitter = require("events");
+
+const emitter = new EventEmitter();
+const url = "http://mylogger.io/log";
+
+function log(message) {
+  // Send an HTTP request
+  console.log(message);
+
+  // Register an Event
+  emitter.emit("messageLogged", { id: 1, url: "http://" });
+}
+
+module.exports = log;
+```
+
+logger.js 코드
+
+이렇게 코드를 분리시킨 후 app.js 를 실행하면 아래와 같은 결과가 나타납니다.
+
+```powershell
+PS C:\Users\user\Desktop\Project\NodeJS> node .\app.js
+Logging...
+message
+```
+
+messageLogged event가 호출되지 않은 것을 확인할 수 있습니다. 이렇게 된 이유는 무엇일까요?
+
+그 이유는 우리가 2개의 서로 다른 eventEmitter를 사용하고 있기 때문입니다. 이 문제를 해결해봅시다.
+
+```javascript
+const EventEmitter = require("events");
+
+const emitter = new EventEmitter();
+const url = "http://mylogger.io/log";
+
+class Logger extends EventEmitter {
+  log(message) {
+    // Send an HTTP request
+    console.log(message);
+
+    // Register an Event
+    emitter.emit("messageLogged", { id: 1, url: "http://" });
+  }
+}
+
+module.exports = Logger;
+```
+
+logger.js 코드
+
+위와 같이 보드를 작성하면 Logger class는 EventEmitter의 특징을 모두 가지고 자기 고유의 특징도 가지게 됩니다. 위 Logger class를 app.js파일에서 불러와 보겠습니다.
+
+```javascript
+const EventEmitter = require("events");
+
+const emitter = new EventEmitter();
+
+emitter.on("Logging", args => {
+  console.log(args.message);
+});
+
+// Raise: Logging (data: message)
+emitter.emit("Logging", { message: "Logging..." });
+
+const Logger = require("./logger");
+const logger = new Logger();
+
+// Register a Listener
+logger.on("messageLogged", args => {
+  // e, eventArg
+  console.log("Listener Called!!: ", args);
+});
+
+logger.log("message");
+```
+
+app.js 코드
+
+이제 emit method와 on method가 같은 EventEmitter에서 호출되기 때문에 appjs를 실행하면 원하는 결과가 나타나게 됩니다.
+
+```powershell
+PS C:\Users\user\Desktop\Project\NodeJS> node .\app.js
+Logging...
+message
+Listener Called!!:  { id: 1, url: 'http://' }
+```
+
