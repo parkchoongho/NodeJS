@@ -206,3 +206,43 @@ PS C:\Users\user\Desktop\Project\NodeJS> node .\app.js
 Files: .git,app.js,Node Modules.md,NodeJS Fundamentals.md,README.md
 ```
 
+### Event Module
+
+**Event**는 Node의 핵심 Concept 중 하나입니다.
+
+**Event** => A signal that something has happened  
+
+```javascript
+const EventEmitter = require("events");
+
+const emitter = new EventEmitter();
+
+// Register an Event
+emitter.emit("messageLogged");
+```
+
+emit method는 event를 발생시킬 때 사용합니다. 위 코드를 실행하면 아무런 결과가 나타나지 않습니다. 왜냐하면 해당 event를 listen할 listener를 등록하지 않았기 때문입니다. Listener란, 해당 event가 발생했을 때 실행되는 함수입니다.
+
+```javascript
+const EventEmitter = require("events");
+
+const emitter = new EventEmitter();
+
+// Register a Listener
+emitter.on("messageLogged", function() {
+  console.log("Listener Called!!");
+});
+
+// Register an Event
+emitter.emit("messageLogged");
+```
+
+on과 addListener method는 둘다 Listener를 등록하는 같은 역할을 하는 method입니다. 이렇게 코드를 작성하고 실행하면 console창에 결과가 나타납니다.
+
+```powershell
+PS C:\Users\user\Desktop\Project\NodeJS> node .\app.js
+Listener Called!!
+```
+
+emit method와 on의 순서도 중요합니다. emit method가 실행되면 Node는 등록된 모든 listener를 동기적으로 iterate합니다. 따라서 순서가 바뀐다면 원하는 결과가 나타나지 않게 됩니다.
+
