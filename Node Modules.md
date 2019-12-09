@@ -423,3 +423,36 @@ message
 Listener Called!!:  { id: 1, url: 'http://' }
 ```
 
+### HTTP Module
+
+http module을 활용하여 http request 요청에 응답하는 간단한 server를 작성해보겠습니다.
+
+```javascript
+const http = require("http");
+
+const server = http.createServer();
+```
+
+여기서 server 변수는 사실 EventEmitter입니다. 이렇게 Node에서 EventEmitter는 중요한 역할을 하고 있습니다.
+
+```javascript
+const http = require("http");
+
+const server = http.createServer((req, res) => {
+  if (req.url === "/") {
+    res.write("Hello!!");
+    res.end();
+  }
+  if (req.url === "/api/courses") {
+    res.write(JSON.stringify([1, 2, 3]));
+    res.end();
+  }
+});
+
+server.listen(3000);
+
+console.log("Listening on Port: 3000...");
+```
+
+이렇게 간단하게 NodeJS의 http module을 활용하여 server를 만들어 봤습니다. 하지만 실제 개발에서는 http module로 서버를 개발하지 않습니다. 왜냐하면 route가 복잡해질수록 작성해야할 코드가 굉장히 복잡해지기 때문입니다. 그 대신 Express라는 Framework를 활용하여 서버를 구성합니다. Express는 http module에 기반해 만들어진 Web Framework입니다.
+
