@@ -85,3 +85,46 @@ Ran all test suites.
 npm ERR! Test failed.  See above for more details.
 ```
 
+### Testing Numbers
+
+lib.test.js
+
+```javascript
+const lib = require("../lib");
+
+test("absolute - should return a positive number if input is positive", () => {
+  const result = lib.absolute(1);
+  expect(result).toBe(1);
+});
+
+test("absolute - should return a positive number if input is negative", () => {
+  const result = lib.absolute(-1);
+  expect(result).toBe(1);
+});
+
+test("absolute - should return 0 if input is 0", () => {
+  const result = lib.absolute(0);
+  expect(result).toBe(0);
+});
+```
+
+위 코드를 실행하면 아래와 같은 결과가 나타납니다.
+
+```powershell
+PS C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo> npm test
+
+> testing-demo@1.0.0 test C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo
+> jest
+
+ PASS  tests/lib.test.js (9.811s)
+  √ absolute - should return a positive number if input is positive (60ms)
+  √ absolute - should return a positive number if input is negative (2ms)
+  √ absolute - should return 0 if input is 0 (1ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        15.957s
+Ran all test suites.
+```
+
