@@ -28,3 +28,9 @@ The practice of writing code to test our code, and then run those tests in an au
   - Very slow
   - Very brittle
 
+The actual ratio between unit, integration and end-to-end tests depends on your project.
+
+- Favour unit tests to e2e tests
+- Cover until test gaps with integration tests
+- Use end-to-end tests sparingly (Only for the key functions of the application)
+
