@@ -128,3 +128,53 @@ Time:        15.957s
 Ran all test suites.
 ```
 
+### Grouping Tests
+
+Tests are **first-class citizens** in your source code.
+
+위에 작성한 lib.test.js를 좀 더 유지보수가 쉬운 코드로 작성해보겠습니다.
+
+lib.test.js
+
+```javascript
+const lib = require("../lib");
+
+describe("absolute", () => {
+  it("should return a positive number if input is positive", () => {
+    const result = lib.absolute(1);
+    expect(result).toBe(1);
+  });
+
+  it("should return a positive number if input is negative", () => {
+    const result = lib.absolute(-1);
+    expect(result).toBe(1);
+  });
+
+  it("should return 0 if input is 0", () => {
+    const result = lib.absolute(0);
+    expect(result).toBe(0);
+  });
+});
+```
+
+위 파일을 실행하면 아래와 같은 결과가 도출됩니다.
+
+```powershell
+PS C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo> npm test
+
+> testing-demo@1.0.0 test C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo
+> jest
+
+ PASS  tests/lib.test.js (5.428s)
+  absolute
+    √ should return a positive number if input is positive (7ms)
+    √ should return a positive number if input is negative (1ms)
+    √ should return 0 if input is 0 (2ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        8.623s, estimated 10s
+Ran all test suites.
+```
+
