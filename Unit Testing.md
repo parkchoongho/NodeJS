@@ -347,3 +347,44 @@ Ran all test suites.
 ```
 
 위와 같은 결과가 나타납니다.
+
+### Testing Arrays
+
+lib.js
+
+```javascript
+module.exports.getCurrencies = function() {
+  return ["USD", "AUD", "EUR"];
+};
+```
+
+lib.test.js
+
+```javascript
+const lib = require("../lib");
+
+describe("getCurrencies", () => {
+  it("should return supported currencies", () => {
+    const result = lib.getCurrencies();
+
+    // Too General
+    expect(result).toBeDefined();
+    expect(result).not.toBeNull();
+
+    // Too Specific
+    expect(result[0]).toBe("USD");
+    expect(result[1]).toBe("AUD");
+    expect(result[2]).toBe("EUR");
+    expect(result.length).toBe(3);
+
+    // Proper Way
+    expect(result).toContain("USD");
+    expect(result).toContain("AUD");
+    expect(result).toContain("EUR");
+
+    // Ideal Way
+    expect(result).toEqual(expect.arrayContaining(["EUR", "USD", "AUD"]));
+  });
+});
+```
+
