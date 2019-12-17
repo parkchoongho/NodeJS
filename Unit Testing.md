@@ -178,3 +178,33 @@ Time:        8.623s, estimated 10s
 Ran all test suites.
 ```
 
+### Refactoring with Confidence
+
+lib.js의 absolute 함수는 아래와 같이 작성되어 있었습니다.
+
+```javascript
+module.exports.absolute = function(number) {
+  if (number > 0) return number;
+  if (number < 0) return -number;
+  return 0;
+};
+```
+
+Refactoring후 lib.js
+
+```javascript
+module.exports.absolute = function(number) {
+  if (number >= 0) return number;
+  return -number;
+};
+```
+
+Refactoring후 lib.js
+
+```javascript
+module.exports.absolute = function(number) {
+  
+  return number >= 0 ? number : -number;
+};
+```
+
