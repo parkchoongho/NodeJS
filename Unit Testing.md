@@ -208,3 +208,142 @@ module.exports.absolute = function(number) {
 };
 ```
 
+### Testing Strings
+
+String Test예시는 너무 specific해서는 안되고 또 너무 general 해서도 안됩니다.
+
+lib.js
+
+```javascript
+module.exports.greet = function(name) {
+  return "Welcome " + name;
+};
+```
+
+lib.test.js
+
+```javascript
+const lib = require("../lib");
+
+describe("greet", () => {
+  it("should return the greeting message", () => {
+    const result = lib.greet("Mosh");
+    expect(result).toBe('Welcome Mosh');
+  });
+});
+```
+
+이렇게 test를 작성하고 test를 실행하면 아래와 같은 결과가 나타납니다.
+
+```powershell
+PS C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo> npm test
+
+> testing-demo@1.0.0 test C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo
+> jest
+
+ PASS  tests/lib.test.js
+  absolute
+    √ should return a positive number if input is positive (7ms)
+    √ should return a positive number if input is negative (1ms)
+    √ should return 0 if input is 0
+  greet
+    √ should return the greeting message
+
+Test Suites: 1 passed, 1 total
+Tests:       4 passed, 4 total
+Snapshots:   0 total
+Time:        7.119s
+Ran all test suites.
+```
+
+제대로 동작된 것처럼 보이지만 lib.js를 수정해서 다시 동작시켜 보겠습니다.
+
+lib.js
+
+```javascript
+module.exports.greet = function(name) {
+  return "Welcome " + name + '!';
+};
+```
+
+위와 같이 코드를 수정하고 실행하면 아래와 같은 결과가 나타납니다.
+
+```powershell
+PS C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo> npm test
+
+> testing-demo@1.0.0 test C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo
+> jest
+
+ FAIL  tests/lib.test.js
+  absolute
+    √ should return a positive number if input is positive (6ms)
+    √ should return a positive number if input is negative (1ms)
+    √ should return 0 if input is 0 (1ms)
+  greet
+    × should return the greeting message (10ms)
+
+  ● greet › should return the greeting message
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Welcome Mosh"
+    Received: "Welcome Mosh!"
+
+      21 |   it("should return the greeting message", () => {
+      22 |     const result = lib.greet("Mosh");
+    > 23 |     expect(result).toBe("Welcome Mosh");
+         |                    ^
+      24 |   });
+      25 | });
+      26 | 
+
+      at Object.it (tests/lib.test.js:23:20)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 3 passed, 4 total
+Snapshots:   0 total
+Time:        6.958s
+Ran all test suites.
+npm ERR! Test failed.  See above for more details.
+```
+
+위와 같은 에러가 발생합니다. 여기서 String을 test하는 코드가 너무 specific하기 때문에 조금 general하게 수정하도록 하겠습니다.
+
+lib.test.js 수정
+
+```javascript
+const lib = require("../lib");
+
+describe("greet", () => {
+  it("should return the greeting message", () => {
+    const result = lib.greet("Mosh");
+    expect(result).toMatch(/Mosh/);
+    // expect(result).toContain("Mosh"); 정규 표현식을 사용하고 싶지 않으면 이와 같이 작성해도 같은 결과를 도출합니다.
+  });
+});
+```
+
+아래와 같이 수정을 하고 코드를 실행하면
+
+```powershell
+PS C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo> npm test
+
+> testing-demo@1.0.0 test C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo
+> jest
+
+ PASS  tests/lib.test.js
+  absolute
+    √ should return a positive number if input is positive (7ms)
+    √ should return a positive number if input is negative
+    √ should return 0 if input is 0
+  greet
+    √ should return the greeting message (1ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       4 passed, 4 total
+Snapshots:   0 total
+Time:        6.786s
+Ran all test suites.
+```
+
+위와 같은 결과가 나타납니다.
