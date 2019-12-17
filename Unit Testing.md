@@ -576,3 +576,87 @@ Ran all test suites.
 npm ERR! Test failed.  See above for more details.
 ```
 
+### Testing Exceptions
+
+Exceptions를 Test하는데 있어서는 다른 관점에서 접근하는 것이  좋습니다. 해당 result를 값으로 전달받는 것이 아니기 때문에 해당 function을 callback function으로 주는 것이 더 좋습니다.
+
+lib.js
+
+```javascript
+module.exports.registerUser = function(username) {
+  if (!username) throw new Error("Username is required.");
+
+  return { id: new Date().getTime(), username: username };
+};
+```
+
+lib.test.js
+
+```javascript
+describe("registerUser", () => {
+  it("should throw if username is falsy", () => {
+    // Null
+    // undefined
+    // NaN
+    // ''
+    // 0
+    // false
+    expect(() => {
+      lib.registerUser(null);
+    }).toThrow();
+  });
+});
+```
+
+lib.test.js
+
+```javascript
+const lib = require("../lib");
+
+describe("registerUser", () => {
+  it("should throw if username is falsy", () => {
+    const args = [null, undefined, NaN, "", 0, false];
+    args.forEach(a => {
+      expect(() => {
+        lib.registerUser(a);
+      }).toThrow();
+    });
+  });
+  it("should return a user object if valid username is passed", () => {
+    const result = lib.registerUser("mosh");
+    expect(result).toMatchObject({ username: "mosh" });
+    expect(result.id).toBeGreaterThan(0);
+  });
+});
+```
+
+Test 실행결과
+
+```powershell
+PS C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo> npm test
+
+> testing-demo@1.0.0 test C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo
+> jest
+
+ PASS  tests/lib.test.js
+  absolute
+    √ should return a positive number if input is positive (6ms)
+    √ should return a positive number if input is negative (1ms)
+    √ should return 0 if input is 0
+  greet
+    √ should return the greeting message (1ms)
+  getCurrencies
+    √ should return supported currencies (5ms)
+  getProduct
+    √ should return the product with the given id (2ms)
+  registerUser
+    √ should throw if username is falsy (53ms)
+    √ should return a user object if valid username is passed (2ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       8 passed, 8 total
+Snapshots:   0 total
+Time:        6.901s
+Ran all test suites.
+```
+
