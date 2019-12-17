@@ -388,3 +388,191 @@ describe("getCurrencies", () => {
 });
 ```
 
+### Testing Objects
+
+lib.js
+
+```javascript
+module.exports.getProduct = function(productId) {
+  return { id: productId, price: 10 };
+};
+```
+
+lib.test.js
+
+```javascript
+const lib = require("../lib");
+
+describe("getProduct", () => {
+  it("should return the product with the given id", () => {
+    const result = lib.getProduct(1);
+    expect(result).toBe({ id: 1, price: 10 });
+  });
+});
+```
+
+Test 실행 결과
+
+```powershell
+PS C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo> npm test
+
+> testing-demo@1.0.0 test C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo
+> jest
+
+ FAIL  tests/lib.test.js
+  absolute
+    √ should return a positive number if input is positive (8ms)
+    √ should return a positive number if input is negative (2ms)
+    √ should return 0 if input is 0 (1ms)
+  greet
+    √ should return the greeting message (2ms)
+  getCurrencies
+    √ should return supported currencies (7ms)
+  getProduct
+    × should return the product with the given id (19ms)
+
+  ● getProduct › should return the product with the given id
+
+    expect(received).toBe(expected) // Object.is equality
+
+    If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+    Expected: {"id": 1, "price": 10}
+    Received: serializes to the same string
+
+      53 |   it("should return the product with the given id", () => {
+      54 |     const result = lib.getProduct(1);
+    > 55 |     expect(result).toBe({ id: 1, price: 10 });
+         |                    ^
+      56 |   });
+      57 | });
+      58 | 
+
+      at Object.it (tests/lib.test.js:55:20)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 5 passed, 6 total
+Snapshots:   0 total
+Time:        7.206s, estimated 9s
+Ran all test suites.
+npm ERR! Test failed.  See above for more details.
+```
+
+toBe method를 사용하면 해당 객체 메모리 주소와 비교합니다. 따라서 우리는 해당 객체의 key에 해당하는 value값이 같은지 각각 비교해야 합니다. 이를 위해 다른 method를 사용합니다.
+
+lib.test.js
+
+```javascript
+const lib = require("../lib");
+
+describe("getProduct", () => {
+  it("should return the product with the given id", () => {
+    const result = lib.getProduct(1);
+    expect(result).toEqual({ id: 1, price: 10 });
+  });
+});
+```
+
+그리고 test를 진행해보겠습니다.
+
+```powershell
+PS C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo> npm test
+
+> testing-demo@1.0.0 test C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo
+> jest
+
+ PASS  tests/lib.test.js (6.982s)
+  absolute
+    √ should return a positive number if input is positive (6ms)
+    √ should return a positive number if input is negative (1ms)
+    √ should return 0 if input is 0 (1ms)
+  greet
+    √ should return the greeting message (2ms)
+  getCurrencies
+    √ should return supported currencies (5ms)
+  getProduct
+    √ should return the product with the given id (2ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       6 passed, 6 total
+Snapshots:   0 total
+Time:        15.201s
+Ran all test suites.
+```
+
+만일 정확하게 해당 property 값을 가지고 있고 맞춰야 한다면 toEqual method를 사용하고 해당 property 값을 맞추기만 하고 그 의외의 property는 맞추지 않아도 된다면 toMatchObject method를 사용합니다.
+
+lib.js
+
+```javascript
+module.exports.getProduct = function(productId) {
+  return { id: productId, price: 10, category: "Food" };
+};
+```
+
+lib.test.js
+
+```javascript
+const lib = require("../lib");
+
+describe("getProduct", () => {
+  it("should return the product with the given id", () => {
+    const result = lib.getProduct(1);
+    expect(result).toEqual({ id: 1, price: 10 });
+
+    expect(result).toMatchObject({ id: 1, price: 10 });
+  });
+});
+```
+
+Test 실행결과
+
+```powershell
+PS C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo> npm test
+
+> testing-demo@1.0.0 test C:\Users\user\Desktop\11.6- Writing Your First Test\11.6- Writing Your First Test\testing-demo
+> jest
+
+ FAIL  tests/lib.test.js
+  absolute
+    √ should return a positive number if input is positive (9ms)
+    √ should return a positive number if input is negative (2ms)
+    √ should return 0 if input is 0 (1ms)
+  greet
+    √ should return the greeting message (17ms)
+  getCurrencies
+    √ should return supported currencies (80ms)
+  getProduct
+    × should return the product with the given id (28ms)
+
+  ● getProduct › should return the product with the given id
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected
+    + Received
+
+      Object {
+    +   "category": "Food",
+        "id": 1,
+        "price": 10,
+      }
+
+      53 |   it("should return the product with the given id", () => {
+      54 |     const result = lib.getProduct(1);
+    > 55 |     expect(result).toEqual({ id: 1, price: 10 });
+         |                    ^
+      56 | 
+      57 |     expect(result).toMatchObject({ id: 1, price: 10 });
+      58 |   });
+
+      at Object.it (tests/lib.test.js:55:20)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 5 passed, 6 total
+Snapshots:   0 total
+Time:        7.819s
+Ran all test suites.
+npm ERR! Test failed.  See above for more details.
+```
+
