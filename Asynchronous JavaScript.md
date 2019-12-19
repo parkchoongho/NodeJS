@@ -105,3 +105,32 @@ Repos:  [ 'repo1', 'repo2', 'repo3' ]
 그러면 `console.log("데이터 베이스에서 읽어오는 중입니다....")` 다 실행되고 해당 callback 함수를 실행합니다. 해당 Callback 함수에서의 `console.log("User: ", user)` 부분이 실행되고 그 다음 getRepos 함수가 실행됩니다.
 
 getRepos함수 안에서 setTimeOut 함수가 실행되면서 해당 코드가 Web APIs에 들어갑니다. 요청 시간이 끝난 코드는 Event Loop안에 들어갑니다. 마지막에 호출됐던 getRepos 함수까지 종료되면 EventLoop안에서 대기하고 있던 나머지 코드들이 실행되면서 프로그램은 마무리됩니다.
+
+### Promises
+
+Promise는 asynchronous한 동작의 eventual 결과를 가지고 있는 객체입니다. 비동기적인 operation이 완료된 후에는, 어떠한 값이나 에러 둘 중 하나를 반환하게 됩니다. Promise는 비동기적인 코드가 실행된 후 어떠한 결과가 반환됨을 약속합니다(Promise).
+
+Promise 객체는 총 세개의 상태 중 한가지 상태에 있게 됩니다.
+
+먼저, Promise 객체를 생성하면 이는 **pending** 상태에 있게 됩니다. 그 후 async operation이 진행된 후, 성공적으로 실행이 되었으면 **Fulfilled**, 실패했다면 **Rejected** 상태가 됩니다.
+
+```javascript
+const p = new Promise((resolve, reject) => {
+  // Kick off some async work
+  // ...
+
+  setTimeout(() => {
+    resolve(1); // pending => resolved, fulfilled
+    reject(new Error("The Error!!!")); // pending => rejected
+  }, 2000);
+});
+
+p.then(result => {
+  console.log(result);
+}).catch(error => {
+  console.log(error.message);
+});
+```
+
+resolve와 reject는 함수입니다. 만일 async operation을 성공적으로 행했다면 resolve함수를 호출하고  에러가 발생했다면 reject 함수를 호출합니다. 만든 promise 객체 p를 활용하여 async operation을 handling해 보았습니다.
+
