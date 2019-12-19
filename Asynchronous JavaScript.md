@@ -196,3 +196,100 @@ function getRepos(userName) {
 }
 ```
 
+### Running Promises in Parallel
+
+만일 여러 async operation이 완료된 후의 상태에서부터 코드가 진행되는 Logic을 짜고 싶으면 어떻게 해야 할까요? (예를 들어 Facebook API를 찌르고 Twitter API를 찌른 다음 각각의 결과를 모두 가진 상태를 만든다고 가정해봅시다.)
+
+```javascript
+const p1 = new Promise(resolve => {
+  setTimeout(() => {
+    console.log("Async Operation 1...");
+    resolve(1);
+  }, 2000);
+});
+
+const p2 = new Promise(resolve => {
+  setTimeout(() => {
+    console.log("Async Operation 2...");
+    resolve(2);
+  }, 2000);
+});
+
+Promise.all([p1, p2]).then(result => console.log(result));
+```
+
+위 코드를 실행하면
+
+```powershell
+PS C:\Users\User\Desktop\Project\express-demo> node .\promise-api.js
+Async Operation 1...
+Async Operation 2...
+[ 1, 2 ]
+```
+
+이렇게 결과가 나타납니다. Promise 클래스의 all method는 둘다 모두 성공적으로 async operation을 진행해야 결과를 가져옵니다. 그리고 각각의 결과를 배열에 담아서 반환합니다. 둘 중 하나라도 에러가 발생한면 reject를 실행합니다.
+
+```javascript
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    console.log("Async Operation 1...");
+    reject(new Error("Somthing Happen!!"));
+  }, 2000);
+});
+
+const p2 = new Promise(resolve => {
+  setTimeout(() => {
+    console.log("Async Operation 2...");
+    resolve(2);
+  }, 2000);
+});
+
+Promise.all([p1, p2])
+  .then(result => console.log(result))
+  .catch(error => console.log("Error: ", error));
+```
+
+위 코드를 실행하면
+
+```powershell
+PS C:\Users\User\Desktop\Project\express-demo> node .\promise-api.js
+Async Operation 1...
+Error:  Error: Somthing Happen!!
+    at Timeout._onTimeout (C:\Users\User\Desktop\Project\express-demo\promise-api.js:4:12)
+    at listOnTimeout (internal/timers.js:531:17)
+    at processTimers (internal/timers.js:475:7)
+Async Operation 2...
+```
+
+위와 같은 결과가 나타납니다.
+
+만일 해당 Promise 중 하나라도 성공적으로 작동할 경우에 then을 실행하고 싶으면 Promise 클래스의 race method를 사용합니다. (가장 먼저 완료되는 operation이 성공하면 해당 resolve가 return하는 값을 반환합니다.)
+
+```javascript
+const p1 = new Promise(resolve => {
+  setTimeout(() => {
+    console.log("Async Operation 1...");
+    resolve(1);
+  }, 2000);
+});
+
+const p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    console.log("Async Operation 2...");
+
+    reject(new Error("Somthing Happen!!"));
+  }, 2000);
+});
+
+Promise.race([p1, p2])
+  .then(result => console.log(result))
+  .catch(error => console.log("Error: ", error));
+```
+
+```powershell
+PS C:\Users\User\Desktop\Project\express-demo> node .\promise-api.js
+Async Operation 1...
+1
+Async Operation 2...
+```
+
