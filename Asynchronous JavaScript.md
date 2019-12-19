@@ -293,3 +293,139 @@ Async Operation 1...
 Async Operation 2...
 ```
 
+### Async and Await
+
+Async / Await은 asynchronous한 코드를 synchronous처럼 보이게 작성할 수 있습니다.
+
+```javascript
+console.log("시작!");
+
+getUser(1)
+  .then(user => {
+    console.log("User: ", user);
+    return getRepos(user.github);
+  })
+  .then(repos => console.log("Repos: ", repos))
+  .catch(error => console.log(error));
+
+console.log("끝!");
+
+function getUser(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log("데이터 베이스에서 읽어오는 중입니다....");
+      resolve({ id: id, github: "pchyo92" });
+    }, 2000);
+  });
+}
+
+function getRepos(userName) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log("GitHub API에 요청 중....");
+      resolve(["repo1", "repo2", "repo3"]);
+    }, 2000);
+  });
+}
+```
+
+위 코드를 아래와 같이 변환합니다.
+
+```javascript
+console.log("시작!");
+
+// getUser(1)
+//   .then(user => {
+//     console.log("User: ", user);
+//     return getRepos(user.github);
+//   })
+//   .then(repos => console.log("Repos: ", repos))
+//   .catch(error => console.log(error));
+
+async function displayRepos() {
+  const user = await getUser(1);
+  const repos = await getRepos(user.github);
+  console.log(repos);
+}
+
+displayRepos();
+
+console.log("끝!");
+
+function getUser(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log("데이터 베이스에서 읽어오는 중입니다....");
+      resolve({ id: id, github: "pchyo92" });
+    }, 2000);
+  });
+}
+
+function getRepos(userName) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log("GitHub API에 요청 중....");
+      resolve(["repo1", "repo2", "repo3"]);
+    }, 2000);
+  });
+}
+```
+
+위에서 보면 알 수 있듯이 Async / Await의 기반은 Promise입니다. 문법적으로 더 편리하고 Synchronous처럼 보이도록 하는 코드 작성법일 뿐이지 그 근간은 Promise입니다. Async / Await에서는 then method를 사용할 수 없기에 try, catch문을 사용하여 코드가 정상적으로 진행된 상황과 그 반대의 상황을 Handling합니다.
+
+```javascript
+console.log("시작!");
+
+// getUser(1)
+//   .then(user => {
+//     console.log("User: ", user);
+//     return getRepos(user.github);
+//   })
+//   .then(repos => console.log("Repos: ", repos))
+//   .catch(error => console.log(error));
+
+async function displayRepos() {
+  try {
+    const user = await getUser(1);
+    const repos = await getRepos(user.github);
+    console.log(repos);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+displayRepos();
+
+console.log("끝!");
+
+function getUser(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log("데이터 베이스에서 읽어오는 중입니다....");
+      resolve({ id: id, github: "pchyo92" });
+    }, 2000);
+  });
+}
+
+function getRepos(userName) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log("GitHub API에 요청 중....");
+      reject(new Error());
+    }, 2000);
+  });
+}
+```
+
+```powershell
+PS C:\Users\User\Desktop\Project\express-demo> node .\index.js
+시작!
+끝!
+데이터 베이스에서 읽어오는 중입니다....
+GitHub API에 요청 중....
+Error
+    at Timeout._onTimeout (C:\Users\User\Desktop\Project\express-demo\index.js:38:14)
+    at listOnTimeout (internal/timers.js:531:17)
+    at processTimers (internal/timers.js:475:7)
+```
+
