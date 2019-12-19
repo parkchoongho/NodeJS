@@ -45,3 +45,14 @@ PS C:\Users\User\Desktop\Project\express-demo> node index.js
 ```
 
 setTimeout 함수는 argument1 으로 받는 함수를 argument2로 받는 시간 뒤에 실행하는 함수입니다. 그런데 자바스크립트는 2초라는 시간후에 setTimeout이 실행되고 종료 (blocking)되고 난 후에 그 다음 코드를 진행하는 것이 아닌 setTimeout()을 실행하고 난 후 바로 그 다음 코드를 진행하는 특징을 가지고 있습니다. 따라서 중간! 이라는 텍스트가 가장 나중에 찍히는 것이죠. 이것이 바로 Asynchronous, non-blocking 이라 불리는 자바스크립트의 특징입니다. 
+
+### Patterns for Dealing with Asynchronous Code
+
+자바스크립트에는 이러한 Aynchronous를 Hanling 할 수 있는 Coding Pattern이 존재합니다. 크게 3가지가 있는데 
+
+- Callbacks
+- Promises
+- Async/Await
+
+이 바로 그것들 입니다. 다음에서는 먼저 Callback에 대해서 알아보겠습니다.
+
