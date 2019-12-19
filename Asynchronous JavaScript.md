@@ -134,3 +134,65 @@ p.then(result => {
 
 resolve와 reject는 함수입니다. 만일 async operation을 성공적으로 행했다면 resolve함수를 호출하고  에러가 발생했다면 reject 함수를 호출합니다. 만든 promise 객체 p를 활용하여 async operation을 handling해 보았습니다.
 
+### Changing Callback to Promise
+
+```javascript
+console.log("시작!");
+
+getUser(1, user => {
+  console.log("User: ", user);
+  getRepos(user.github, repos => {
+    console.log("Repos: ", repos);
+  });
+});
+
+console.log("끝!");
+
+function getUser(id, callback) {
+  setTimeout(() => {
+    console.log("데이터 베이스에서 읽어오는 중입니다....");
+    callback({ id: id, github: "pchyo92" });
+  }, 2000);
+}
+function getRepos(userName, callback) {
+  setTimeout(() => {
+    console.log("GitHub API에 요청 중....");
+    callback(["repo1", "repo2", "repo3"]);
+  }, 2000);
+}
+```
+
+위에 작성했던 이 콜백 코드를 Promise로 변환시키겠습니다.
+
+```javascript
+console.log("시작!");
+
+getUser(1)
+  .then(user => {
+    console.log("User: ", user);
+    return getRepos(user.github);
+  })
+  .then(repos => console.log("Repos: ", repos))
+  .catch(error => console.log(error));
+
+console.log("끝!");
+
+function getUser(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log("데이터 베이스에서 읽어오는 중입니다....");
+      resolve({ id: id, github: "pchyo92" });
+    }, 2000);
+  });
+}
+
+function getRepos(userName) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log("GitHub API에 요청 중....");
+      resolve(["repo1", "repo2", "repo3"]);
+    }, 2000);
+  });
+}
+```
+
