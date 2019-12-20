@@ -422,3 +422,31 @@ findCourses();
 ```
 
 and도 똑같이 작동합니다.
+
+### Regular Expressions
+
+바로 전 Section에서 작성한 쿼리는 정확히 "Park Choong Ho"와 같은 author value을 가진 course만 반환합니다. 만일 해당 String을 포함한 Course를 가지고 오려면 어떻게 하면 될까요? 또는 맨 앞에 있는 문자열이 해당 문자열과 동일한 Course를 반환받으려면 어떻게 해야 할까요? 여기서 정규표현식이 사용됩니다.
+
+```javascript
+async function findCourses() {
+  try {
+    const courses = await Course
+      // Starts with Mosh
+      // .find({ author: /^Mosh/ })
+      // Ends with Hamin with case insensitive
+      // .find({ author: /Hamin$/i })
+      // Contains Mosh with case insensitive
+      .find({ author: /.*Mosh.*/i })
+      .limit(10)
+      .sort({ name: 1 })
+      .select({ name: 1, tags: 1 });
+    console.log(courses);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+findCourses();
+```
+
+이렇게 정규표현식을 활용하여 해당 문자열에 대한 복잡한 쿼리들을 생성할 수 있습니다.
