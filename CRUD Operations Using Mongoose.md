@@ -330,3 +330,69 @@ MongoDB Connected...
 ]
 ```
 
+### Comparison Query Operator
+
+Mongoose, MongoDB에 있는 여러가지 Comparison Query Operator을 알아봅시다.
+
+- eq (equal)
+- ne (not equal)
+- gt (greater than)
+- gte (greater than or equal to)
+- lt (less than)
+- lte (less than or equal to)
+- in
+- nin (not in)
+
+```javascript
+async function findCourses() {
+  try {
+    const courses = await Course.find({price: {$gt: 10}})
+      .limit(10)
+      .sort({ name: 1 })
+      .select({ name: 1, tags: 1 });
+    console.log(courses);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+findCourses();
+```
+
+이렇게 쿼리를 작성하면 price property가 10보다 큰 강의들만 가지고 옵니다. ($로 operator임을 표시합니다.)
+
+```javascript
+async function findCourses() {
+  try {
+    const courses = await Course.find({price: {$gt: 10, $lt: 20}})
+      .limit(10)
+      .sort({ name: 1 })
+      .select({ name: 1, tags: 1 });
+    console.log(courses);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+findCourses();
+```
+
+price property 값이 10초과 20미만인 강의들을 가져옵니다.
+
+```javascript
+async function findCourses() {
+  try {
+    const courses = await Course.find({price: {$in: [10, 20, 30]}})
+      .limit(10)
+      .sort({ name: 1 })
+      .select({ name: 1, tags: 1 });
+    console.log(courses);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+findCourses();
+```
+
+price property가 10, 20, 30인 강의들을 반환합니다.
