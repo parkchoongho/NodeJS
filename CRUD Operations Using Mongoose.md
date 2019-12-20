@@ -473,3 +473,29 @@ findCourses();
 ```
 
 count method를 활용하면 됩니다.
+
+### Pagination
+
+특정 페이지에 해당하는 document들만 가져오고 싶다면 어떻게 해야할까요? skip이라는 method를 활용하면 가능합니다.
+
+```javascript
+async function findCourses() {
+  const pageNumber = 2;
+  const pageSize = 10;
+  try {
+    const courses = await Course
+      .find({ author: /.*Mosh.*/i })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .sort({ name: 1 })
+      .count();
+    console.log(courses);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+findCourses();
+```
+
+실제 개발에서 이렇게 하드코딩을 하지는 않지만 같은 원리로 동작합니다.
