@@ -70,3 +70,65 @@ const courseNode = new Course({
 mongoose object에는 model이라는 method가 존재하고 2개의 arguments를 받습니다. 하나는 이 모델을 활용한 collection의 이름, 다른 하나는 해당 collection안 document의 shape을 정해놓은 schema입니다. 그러면 이에 해당하는 Class를 얻게됩니다. 따라서 해당 변수는 맨 앞을 대문자로 작성합니다. 그리고 비로소 해당 Class로 객체를 생성할 수 있습니다. 해당 객체는 MongoDB의 document와 맵핑됩니다.
 
 실제 객체를 생성하는 것에서 RDBMS와의 차이를 확인할 수 있습니다. RDBMS에서는 각각의 column이 하나의 값만을 가지는 것을 원칙으로 합니다. 따라서 RDBMS에서 위 table을 모델링한다고 하면 총 3개의 table이 필요하게 될 것입니다. 하지만 MongoDB는 그럴 필요없이 여러가지 값이나 객체를 쉽게 데이터 베이스에 저장할 수 있습니다. 
+
+### Saving a Document
+
+이제 해당 객체를 데이터베이스에 저장해 보겠습니다. 
+
+```javascript
+const mongoose = require("mongoose");
+
+mongoose
+  .connect("mongodb://localhost/playground")
+  .then(() => console.log("MongoDB Connected..."))
+  .catch(err => console.log("Could Not Connect MongoDB ", err));
+
+const courseSchema = new mongoose.Schema({
+  name: String,
+  author: String,
+  tags: [String],
+  date: { type: Date, default: Date.now },
+  isPublished: Boolean
+});
+
+const Course = mongoose.model("Course", courseSchema);
+
+async function createCourse() {
+  const courseNode = new Course({
+    name: "node.js",
+    author: "Park Choong Ho",
+    tags: ["node", "backend"],
+    isPublished: true
+  });
+
+  const result = await courseNode.save();
+  console.log(result);
+}
+
+createCourse();
+```
+
+course 객체는 save method를 가지고 있습니다. 이 save는 비동기 동작입니다. 해당 객체를 mongodb에 저장하는데 시간이 걸리기 때문입니다. (좀 더 명확히 얘기하면 파일시스템에 접근하기 때문입니다.) 이 method는 Promise를 return합니다. 해당 Promise를 await을 통해 받으면 실제 Database에 저장된 객체를 받게됩니다.
+
+이렇게 MongoDB에 데이터를 저장하면 MongoDB는 해당 document를 구별할 수 있는 unique한 구별자를 document에 할당합니다.
+
+위 코드를 실행하면 console에 다음과 같이 찍힙니다.
+
+```powershell
+[nodemon] restarting due to changes...
+[nodemon] starting `node index.js`
+(node:10880) DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version. To use the new parser, pass option { useNewUrlParser: true } to MongoClient.connect.
+(node:10880) DeprecationWarning: current Server Discovery and Monitoring engine is deprecated, and will be removed in a future version. To use the new Server Discover and Monitoring engine, pass option { useUnifiedTopology: true } to the MongoClient constructor.
+MongoDB Connected...
+{
+  tags: [ 'node', 'backend' ],
+  _id: 5dfc5ff22e037d2a80e48f59,
+  name: 'node.js',
+  author: 'Park Choong Ho',
+  isPublished: true,
+  date: 2019-12-20T05:45:22.819Z,
+  __v: 0
+}
+```
+
+앞서 말한 unique한 구별자가 _id property입니다.
