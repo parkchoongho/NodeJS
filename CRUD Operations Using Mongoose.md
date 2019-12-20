@@ -396,3 +396,29 @@ findCourses();
 ```
 
 price property가 10, 20, 30인 강의들을 반환합니다.
+
+### Logical Query Operators
+
+Mongoose, MongoDB에 있는 여러가지 Logical Query Operator을 알아봅시다.
+
+- or
+- and
+
+```javascript
+async function findCourses() {
+  try {
+    const courses = await Course.find()
+      .or([{author: "Park Choong Ho"}, {isPublished: true}])
+      .limit(10)
+      .sort({ name: 1 })
+      .select({ name: 1, tags: 1 });
+    console.log(courses);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+findCourses();
+```
+
+and도 똑같이 작동합니다.
