@@ -450,3 +450,26 @@ findCourses();
 ```
 
 이렇게 정규표현식을 활용하여 해당 문자열에 대한 복잡한 쿼리들을 생성할 수 있습니다.
+
+### Counting
+
+종종 해당 document들이 아닌 document의 개수를 알고 싶은 경우가 있습니다. 그런 경우에는 아래와 같이 쿼리를 작성합니다.
+
+```javascript
+async function findCourses() {
+  try {
+    const courses = await Course
+      .find({ author: /.*Mosh.*/i })
+      .limit(10)
+      .sort({ name: 1 })
+      .count();
+    console.log(courses);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+findCourses();
+```
+
+count method를 활용하면 됩니다.
