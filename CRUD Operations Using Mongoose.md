@@ -95,14 +95,17 @@ const Course = mongoose.model("Course", courseSchema);
 
 async function createCourse() {
   const courseNode = new Course({
-    name: "node.js",
+    name: "react.js",
     author: "Park Choong Ho",
-    tags: ["node", "backend"],
+    tags: ["react", "frontend"],
     isPublished: true
   });
-
-  const result = await courseNode.save();
-  console.log(result);
+  try {
+    const result = await courseNode.save();
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 createCourse();
@@ -132,3 +135,198 @@ MongoDB Connected...
 ```
 
 앞서 말한 unique한 구별자가 _id property입니다.
+
+### Querying Documents
+
+```javascript
+const mongoose = require("mongoose");
+
+mongoose
+  .connect("mongodb://localhost/playground")
+  .then(() => console.log("MongoDB Connected..."))
+  .catch(err => console.log("Could Not Connect MongoDB ", err));
+
+const courseSchema = new mongoose.Schema({
+  name: String,
+  author: String,
+  tags: [String],
+  date: { type: Date, default: Date.now },
+  isPublished: Boolean
+});
+
+const Course = mongoose.model("Course", courseSchema);
+
+async function createCourse() {
+  const courseNode = new Course({
+    name: "react.js",
+    author: "Park Choong Ho",
+    tags: ["react", "frontend"],
+    isPublished: true
+  });
+  try {
+    const result = await courseNode.save();
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function findCourses() {
+  try {
+    const courses = await Course.find();
+    console.log(courses);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+findCourses();
+```
+
+위에 처럼 쿼리를 날린 후, console창을 확인해봅니다.
+
+```powershell
+PS C:\Users\User\Desktop\Project\mongo-demo> node index.js
+(node:8308) DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version. To use the new parser, pass option { useNewUrlParser: true } to MongoClient.connect.
+(node:8308) DeprecationWarning: current Server Discovery and Monitoring engine is deprecated, and will be removed in a future version. To use the new Server Discover and Monitoring engine, pass option { useUnifiedTopology: true } to the MongoClient constructor.
+MongoDB Connected...
+[
+  {
+    tags: [ 'node', 'backend' ],
+    _id: 5dfc609e7dbe5333d4d8a094,
+    name: 'node.js',
+    author: 'Park Choong Ho',
+    isPublished: true,
+    date: 2019-12-20T05:48:14.830Z,
+    __v: 0
+  },
+  {
+    tags: [ 'react', 'frontend' ],
+    _id: 5dfc612e5393982c347aa251,
+    name: 'react.js',
+    author: 'Park Choong Ho',
+    isPublished: true,
+    date: 2019-12-20T05:50:38.199Z,
+    __v: 0
+  }
+]
+```
+
+이렇게 결과값이 나타나는 것을 확인할 수 있습니다.
+
+또한 filter를 줌으로써 원하는 데이터만 가져올 수도 있습니다.
+
+```javascript
+const mongoose = require("mongoose");
+
+mongoose
+  .connect("mongodb://localhost/playground")
+  .then(() => console.log("MongoDB Connected..."))
+  .catch(err => console.log("Could Not Connect MongoDB ", err));
+
+const courseSchema = new mongoose.Schema({
+  name: String,
+  author: String,
+  tags: [String],
+  date: { type: Date, default: Date.now },
+  isPublished: Boolean
+});
+
+const Course = mongoose.model("Course", courseSchema);
+
+async function createCourse() {
+  const courseNode = new Course({
+    name: "react.js",
+    author: "Park Choong Ho",
+    tags: ["react", "frontend"],
+    isPublished: true
+  });
+  try {
+    const result = await courseNode.save();
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function findCourses() {
+  try {
+    const courses = await Course.find({ name: "node.js" });
+    console.log(courses);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+findCourses();
+```
+
+이렇게 쿼리를 날리면 name property가 "node.js"인 객체만 배열에 담아서 반환합니다.
+
+```javascript
+const mongoose = require("mongoose");
+
+mongoose
+  .connect("mongodb://localhost/playground")
+  .then(() => console.log("MongoDB Connected..."))
+  .catch(err => console.log("Could Not Connect MongoDB ", err));
+
+const courseSchema = new mongoose.Schema({
+  name: String,
+  author: String,
+  tags: [String],
+  date: { type: Date, default: Date.now },
+  isPublished: Boolean
+});
+
+const Course = mongoose.model("Course", courseSchema);
+
+async function createCourse() {
+  const courseNode = new Course({
+    name: "react.js",
+    author: "Park Choong Ho",
+    tags: ["react", "frontend"],
+    isPublished: true
+  });
+  try {
+    const result = await courseNode.save();
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function findCourses() {
+  try {
+    const courses = await Course.find()
+      .limit(10)
+      .sort({ name: 1 })
+      .select({ name: 1, tags: 1 });
+    console.log(courses);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+findCourses();
+```
+
+```powershell
+(node:3984) DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version. To use the new parser, pass option { useNewUrlParser: true } to MongoClient.connect.
+(node:3984) DeprecationWarning: current Server Discovery and Monitoring engine is deprecated, and will be removed in a future version. To use the new Server Discover and Monitoring engine, pass option { useUnifiedTopology: true } to the MongoClient constructor.
+MongoDB Connected...
+[
+  {
+    tags: [ 'node', 'backend' ],
+    _id: 5dfc609e7dbe5333d4d8a094,
+    name: 'node.js'
+  },
+  },
+  {
+    tags: [ 'react', 'frontend' ],
+    _id: 5dfc612e5393982c347aa251,
+    name: 'react.js'
+  }
+]
+```
+
