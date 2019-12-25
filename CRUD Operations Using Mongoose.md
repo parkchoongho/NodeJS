@@ -551,3 +551,5 @@ async function updateCourse(id) {
 updateCourse("5dfc609e7dbe5333d4d8a094");
 ```
 
+### Removing Documents
+
