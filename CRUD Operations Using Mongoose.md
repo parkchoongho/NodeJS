@@ -553,3 +553,16 @@ updateCourse("5dfc609e7dbe5333d4d8a094");
 
 ### Removing Documents
 
+```javascript
+async function removeCourse(id) {
+  try {
+    const course = await Course.findByIdAndRemove(id);
+    console.log(course);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+removeCourse("5dfc609e7dbe5333d4d8a094");
+```
+
