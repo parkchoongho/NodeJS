@@ -502,3 +502,52 @@ findCourses();
 
 ### Updating a Document: Query First
 
+```javascript
+async function updateCourse(id) {
+  // Approach: Query First
+  // findById()
+  // Modify its properties
+  // save()
+  try {
+    const course = await Course.findById(id);
+    if (!course) return;
+
+    course.isPublished = true;
+    course.author = "Another Author";
+    const result = await course.save();
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+
+  // Approach: Update First
+  // Update directly
+  // Optionally: get the updated document
+}
+
+updateCourse("5a68fdc3615eda645bc6bdec");
+```
+
+### Updating a Document: Update First
+
+```javascript
+async function updateCourse(id) {
+ try {
+    const result = await Course.update(
+      { _id: id },
+      {
+        $set: {
+          author: "Mosh",
+          isPublished: false
+        }
+      }
+    );
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+updateCourse("5dfc609e7dbe5333d4d8a094");
+```
+
