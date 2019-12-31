@@ -76,3 +76,48 @@ module.exports = {
 };
 ```
 
+### JSON Web Tokens
+
+**Json Web Token**은 사용자를 구별하는 긴 문자열입니다. 클라이언트에서 서버에 로그인 요청을 하여 로그인에 성공을 하면 서버는 JWT을 발행해 클라이언트에게 전달합니다. JWT는 크게 Header, Payload, Verify Signature 이렇게 3가지로 구성됩니다.
+
+Encoded
+
+```javascript
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+```
+
+.으로 Header, Payload, Verify Signature 파트를 구분합니다.
+
+Decoded
+
+Header
+
+```json
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+```
+
+Payload
+
+```json
+{
+  "sub": "1234567890",
+  "name": "John Doe",
+  "iat": 1516239022
+}
+```
+
+Verify Signature
+
+```json
+HMACSHA256(
+  base64UrlEncode(header) + "." +
+  base64UrlEncode(payload),
+  
+your-256-bit-secret
+
+) secret base64 encoded
+```
+
